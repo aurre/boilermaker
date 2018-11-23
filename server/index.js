@@ -7,7 +7,7 @@ const passport = require('passport')
 const SequelizeStore = require('connect-session-sequelize')(session.Store)
 const db = require('./db')
 const sessionStore = new SequelizeStore({db})
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 3000
 const app = express()
 const socketio = require('socket.io')
 module.exports = app
@@ -63,12 +63,8 @@ const createApp = () => {
   app.use(passport.initialize())
   app.use(passport.session())
 
-  // auth and api routes
-  app.use('/auth', require('./auth'))
+  // api routes
   app.use('/api', require('./api'))
-
-  // static file-serving middleware
-  app.use(express.static(path.join(__dirname, '..', 'public')))
 
   // any remaining requests with an extension (.js, .css, etc.) send 404
   app.use((req, res, next) => {
@@ -79,11 +75,6 @@ const createApp = () => {
     } else {
       next()
     }
-  })
-
-  // sends index.html
-  app.use('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public/index.html'))
   })
 
   // error handling endware
